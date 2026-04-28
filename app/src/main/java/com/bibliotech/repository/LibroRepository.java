@@ -1,27 +1,28 @@
 package com.bibliotech.repository;
 
-import com.bibliotech.model.Libro;
+import com.bibliotech.model.Recurso;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LibroRepository implements Repository<Libro, String> {
-    private final List<Libro> baseDeDatos = new ArrayList<>();
+public class LibroRepository implements Repository<Recurso, String> {
+    private final List<Recurso> baseDeDatos = new ArrayList<>();
 
     @Override
-    public void guardar(Libro libro) {
-        baseDeDatos.add(libro);
+    public void guardar(Recurso recurso) {
+        baseDeDatos.removeIf(r -> r.isbn().equals(recurso.isbn()));
+        baseDeDatos.add(recurso);
     }
 
     @Override
-    public Optional<Libro> buscarPorId(String isbn) {
+    public Optional<Recurso> buscarPorId(String id) {
         return baseDeDatos.stream()
-                .filter(libro -> libro.isbn().equals(isbn))
+                .filter(r -> r.isbn().equals(id))
                 .findFirst();
     }
 
     @Override
-    public List<Libro> buscarTodos() {
+    public List<Recurso> buscarTodos() {
         return new ArrayList<>(baseDeDatos);
     }
 }

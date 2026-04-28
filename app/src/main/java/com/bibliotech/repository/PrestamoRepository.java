@@ -1,18 +1,16 @@
 package com.bibliotech.repository;
 
 import com.bibliotech.model.Prestamo;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PrestamoRepository implements Repository<Prestamo, String> {
     private final List<Prestamo> baseDeDatos = new ArrayList<>();
 
     @Override
     public void guardar(Prestamo prestamo) {
-        // Removemos la versión vieja si existe (útil para cuando actualizamos con la
-        // fecha de devolución)
         baseDeDatos.removeIf(p -> p.id().equals(prestamo.id()));
         baseDeDatos.add(prestamo);
     }
@@ -29,15 +27,15 @@ public class PrestamoRepository implements Repository<Prestamo, String> {
         return new ArrayList<>(baseDeDatos);
     }
 
-    public int contarPrestamosActivosDeSocio(String dniSocio) {
-        return (int) baseDeDatos.stream()
-                .filter(p -> p.socio().dni().equals(dniSocio) && p.fechaDevolucionReal() == null)
-                .count();
+    public List<Prestamo> buscarHistorialPorSocio(String dni) {
+        return baseDeDatos.stream()
+                .filter(p -> p.socio().dni().equals(dni))
+                .collect(Collectors.toList());
     }
 
-    public List<Prestamo> buscarHistorialPorSocio(String dniSocio) {
-        return baseDeDatos.stream()
-                .filter(p -> p.socio().dni().equals(dniSocio))
-                .toList();
+    public int contarPrestamosActivosDeSocio(String dni) {
+        return (int) baseDeDatos.stream()
+                .filter(p -> p.socio().dni().equals(dni) && p.fechaDevolucionReal() == null)
+                .count();
     }
 }

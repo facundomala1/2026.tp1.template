@@ -2,8 +2,8 @@ package com.bibliotech.service;
 
 import com.bibliotech.exception.BibliotecaException;
 import com.bibliotech.exception.LibroNoDisponibleException;
-import com.bibliotech.model.Libro;
 import com.bibliotech.model.Prestamo;
+import com.bibliotech.model.Recurso;
 import com.bibliotech.model.Socio;
 import com.bibliotech.repository.PrestamoRepository;
 import com.bibliotech.repository.Repository;
@@ -14,23 +14,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PrestamoService {
-    // Inyectamos ambos repositorios
-    private final Repository<Libro, String> libroRepository;
+    private final Repository<Recurso, String> libroRepository;
     private final PrestamoRepository prestamoRepository;
 
-    public PrestamoService(Repository<Libro, String> libroRepository, PrestamoRepository prestamoRepository) {
+    public PrestamoService(Repository<Recurso, String> libroRepository, PrestamoRepository prestamoRepository) {
         this.libroRepository = libroRepository;
         this.prestamoRepository = prestamoRepository;
     }
 
-    public void prestarLibro(String isbn, Socio socio) throws BibliotecaException {
-        Optional<Libro> libroOpt = libroRepository.buscarPorId(isbn);
+    public void prestarRecurso(String isbn, Socio socio) throws BibliotecaException {
+        Optional<Recurso> libroOpt = libroRepository.buscarPorId(isbn);
         if (libroOpt.isEmpty()) {
             throw new LibroNoDisponibleException(isbn);
         }
-        Libro libro = libroOpt.get();
+        Recurso libro = libroOpt.get();
 
-        // El repositorio cuenta automáticamente cuántos tiene sin devolver
         int activos = prestamoRepository.contarPrestamosActivosDeSocio(socio.dni());
 
         if (activos >= socio.maxPrestamos()) {
@@ -39,10 +37,9 @@ public class PrestamoService {
             return;
         }
 
-        // Creamos el registro con 7 días de plazo
         LocalDate hoy = LocalDate.now();
         LocalDate vencimiento = hoy.plusDays(7);
-        String prestamoId = UUID.randomUUID().toString(); // Genera un ID único seguro
+        String prestamoId = UUID.randomUUID().toString();
 
         Prestamo nuevoPrestamo = new Prestamo(prestamoId, socio, libro, hoy, vencimiento, null);
         prestamoRepository.guardar(nuevoPrestamo);
@@ -51,7 +48,7 @@ public class PrestamoService {
                 "✅ Préstamo registrado: '" + libro.titulo() + "' a " + socio.nombre() + ". Vence el: " + vencimiento);
     }
 
-    public void devolverLibro(String prestamoId) throws BibliotecaException {
+    public void    devolverRecurso(String prestamoId) throws BibliotecaException {
         Optional<Prestamo> prestamoOpt = prestamoRepository.buscarPorId(prestamoId);
         if (prestamoOpt.isEmpty()) {
             throw new BibliotecaException("El préstamo no existe.");

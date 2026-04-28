@@ -8,7 +8,7 @@ import com.bibliotech.repository.LibroRepository;
 import com.bibliotech.repository.PrestamoRepository;
 import com.bibliotech.service.PrestamoService;
 
-public class Main {
+public class Main{
     public static void main(String[] args) {
         System.out.println("Iniciando Sistema BiblioTech...\n");
 
@@ -23,12 +23,12 @@ public class Main {
 
         try {
             System.out.println("--- Prueba 1: Prestar Libro ---");
-            servicio.prestarLibro("111", estudiante);
+            servicio.prestarRecurso("111", estudiante);
 
             Prestamo prestamoActivo = prestamoRepo.buscarHistorialPorSocio("40123456").get(0);
 
             System.out.println("\n--- Prueba 2: Devolver Libro ---");
-            servicio.devolverLibro(prestamoActivo.id());
+            servicio.devolverRecurso(prestamoActivo.id());
 
         } catch (BibliotecaException e) {
             System.err.println(" Excepción: " + e.getMessage());
