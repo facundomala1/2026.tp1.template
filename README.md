@@ -7,9 +7,9 @@
 
 | Campo | Respuesta |
 | :--- | :--- |
-| **Nombre** | |
-| **Apellido** | |
-| **Legajo** | |
+| **Nombre** | Facundo |
+| **Apellido** | Mala |
+| **Legajo** | 61244 |
 
 > **Fecha de entrega:** 28 de Abril de 2026
 
